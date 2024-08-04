@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/ZeroBl21/go-further/internal/data"
 	"github.com/ZeroBl21/go-further/internal/validator"
@@ -57,14 +57,15 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	movie := data.Movie{
-		ID:      id,
-		Title:   "Casablanca",
-		Runtime: 102,
-		Genres:  []string{"drama", "romance", "war"},
-
-		CreatedAt: time.Now(),
-		Version:   1,
+	movie, err := app.models.Movies.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
 	}
 
 	if err := app.writeJSON(w, http.StatusOK, envelope{"movie": movie}, nil); err != nil {
