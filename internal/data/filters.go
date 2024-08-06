@@ -1,6 +1,10 @@
 package data
 
-import "github.com/ZeroBl21/go-further/internal/validator"
+import (
+	"strings"
+
+	"github.com/ZeroBl21/go-further/internal/validator"
+)
 
 type Filters struct {
 	Page     int
@@ -21,4 +25,24 @@ func ValidateFilters(v *validator.Validator, f Filters) {
 
 	// Sort
 	v.Check(validator.In(f.Sort, f.SortSafeList...), "sort", "invalid sort value")
+}
+
+// Checks if the sort field matches one of the safelist. If does extract the 
+// column name fromo the sort field
+func (f Filters) sortColumn() string {
+	for _, safeValue := range f.SortSafeList {
+		if f.Sort == safeValue {
+			return strings.TrimPrefix(f.Sort, "-")
+		}
+	}
+
+	panic("unsafe sort parameter: " + f.Sort)
+}
+
+// Return the sort direction depending on the prefix of the sort field
+func (f Filters) sortDirection() string {
+	if strings.Contains(f.Sort, "-") {
+		return "DESC"
+	}
+	return "ASC"
 }
