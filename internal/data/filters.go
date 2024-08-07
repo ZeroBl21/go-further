@@ -27,7 +27,7 @@ func ValidateFilters(v *validator.Validator, f Filters) {
 	v.Check(validator.In(f.Sort, f.SortSafeList...), "sort", "invalid sort value")
 }
 
-// Checks if the sort field matches one of the safelist. If does extract the 
+// Checks if the sort field matches one of the safelist. If does extract the
 // column name fromo the sort field
 func (f Filters) sortColumn() string {
 	for _, safeValue := range f.SortSafeList {
@@ -45,4 +45,12 @@ func (f Filters) sortDirection() string {
 		return "DESC"
 	}
 	return "ASC"
+}
+
+func (f Filters) limit() int {
+	return f.PageSize
+}
+
+func (f Filters) offset() int {
+	return (f.Page - 1) * f.PageSize
 }
