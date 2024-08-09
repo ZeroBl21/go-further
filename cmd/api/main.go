@@ -6,11 +6,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/ZeroBl21/go-further/internal/data"
+	"github.com/ZeroBl21/go-further/internal/jsonlog"
 	_ "github.com/lib/pq"
 )
 
@@ -29,7 +31,7 @@ type config struct {
 
 type application struct {
 	config config
-	logger *log.Logger
+	logger *jsonlog.Logger
 	models data.Models
 }
 
@@ -46,7 +48,7 @@ func main() {
 
 	flag.Parse()
 
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	logger := jsonlog.New(os.Stdout, slog.LevelInfo)
 
 	db, err := openDB(cfg)
 	if err != nil {
@@ -54,7 +56,7 @@ func main() {
 	}
 	defer db.Close()
 
-	logger.Printf("database connection pool established")
+	logger.Info("database connection pool established")
 
 	app := &application{
 		config: cfg,
@@ -65,12 +67,16 @@ func main() {
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.port),
 		Handler:      app.routes(),
+		ErrorLog:     log.New(logger, "", 0),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
 
-	logger.Printf("starting %s server on %s", cfg.env, srv.Addr)
+	logger.Info("starting server",
+		slog.String("addr", srv.Addr),
+		slog.String("env", cfg.env),
+	)
 	if err := srv.ListenAndServe(); err != nil {
 		logger.Fatal(err)
 	}
