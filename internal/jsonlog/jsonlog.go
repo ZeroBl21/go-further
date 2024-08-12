@@ -43,7 +43,13 @@ func (l *Logger) Error(msg string, args ...any) {
 }
 
 func (l *Logger) Fatal(err error, args ...any) {
-	l.Log(context.Background(), LevelFatal, err.Error(), slog.Group("properties", args...), formatStackTrace(debug.Stack()))
+	l.Log(
+		context.Background(),
+		LevelFatal,
+		err.Error(),
+		slog.Group("properties", args...),
+		formatStackTrace(debug.Stack()),
+	)
 	os.Exit(1) // For entries at the FATAL level, we also terminate the application.
 }
 
@@ -74,4 +80,3 @@ func replaceAttr(groups []string, a slog.Attr) slog.Attr {
 
 	return a
 }
-

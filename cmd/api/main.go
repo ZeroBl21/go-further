@@ -48,7 +48,12 @@ func main() {
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("GREENLIGHT_DB_DSN"), "PostgreSQL DSN")
 	flag.IntVar(&cfg.db.maxOpenCoons, "db-max-open-conns", 25, "PostgreSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleCoons, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
-	flag.StringVar(&cfg.db.maxIdleTime, "db-max-idle-time", "15m", "PostgreSQL max connection idle time")
+	flag.StringVar(
+		&cfg.db.maxIdleTime,
+		"db-max-idle-time",
+		"15m",
+		"PostgreSQL max connection idle time",
+	)
 
 	// Limiting
 	flag.Float64Var(&cfg.limiting.rps, "limiter-rps", 2, "Rate limiter maximum request per second")
