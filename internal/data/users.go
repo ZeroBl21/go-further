@@ -21,7 +21,7 @@ type User struct {
 	Password  password `json:"-"`
 	Activated bool     `json:"activated"`
 
-	CreatedAt time.Time `json:"-"`
+	CreatedAt time.Time `json:"created_at"`
 	Version   int       `json:"-"`
 }
 
@@ -109,7 +109,7 @@ func (m UserModel) Insert(user *User) error {
 	)
 	if err != nil {
 		switch {
-		case err.Error() == `pq: duplicated key value violates unique constraint "users_email_key`:
+		case err.Error() == `pq: duplicate key value violates unique constraint "users_email_key"`:
 			return ErrDuplicatedEmail
 		default:
 			return err
