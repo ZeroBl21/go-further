@@ -51,7 +51,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 	app.background(func() {
 		err := app.mailer.Send(user.Email, "user_welcome.html", user)
 		if err != nil {
-			app.logger.Error(err.Error(), nil)
+			app.logger.Error(err, nil)
 			return
 		}
 	})

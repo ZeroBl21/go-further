@@ -38,8 +38,8 @@ func (l *Logger) Warn(msg string, args ...any) {
 	l.Logger.Warn(msg, slog.Group("properties", args...))
 }
 
-func (l *Logger) Error(msg string, args ...any) {
-	l.Logger.Error(msg, slog.Group("properties", args...), formatStackTrace(debug.Stack()))
+func (l *Logger) Error(msg error, args ...any) {
+	l.Logger.Error(msg.Error(), slog.Group("properties", args...), formatStackTrace(debug.Stack()))
 }
 
 func (l *Logger) Fatal(err error, args ...any) {
@@ -55,7 +55,7 @@ func (l *Logger) Fatal(err error, args ...any) {
 
 func (l *Logger) Write(p []byte) (n int, err error) {
 	message := string(p)
-	l.Error(message)
+	l.Logger.Error(message)
 	return len(p), nil
 }
 

@@ -150,7 +150,7 @@ func (app *application) readInt(
 func (app *application) background(fn func()) {
 	go func() {
 		if err := recover(); err != nil {
-			app.logger.Error(fmt.Errorf("%s", err).Error(), nil)
+			app.logger.Error(fmt.Errorf("%s", err), nil)
 		}
 
 		fn()
