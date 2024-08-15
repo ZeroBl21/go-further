@@ -146,3 +146,13 @@ func (app *application) readInt(
 
 	return i
 }
+
+func (app *application) background(fn func()) {
+	go func() {
+		if err := recover(); err != nil {
+			app.logger.Error(fmt.Errorf("%s", err).Error(), nil)
+		}
+
+		fn()
+	}()
+}
