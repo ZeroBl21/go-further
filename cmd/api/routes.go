@@ -16,6 +16,7 @@ func (app *application) routes() http.Handler {
 
 	// Users
 	router.HandleFunc("POST /v1/users", app.registerUserHandler)
+	router.HandleFunc("PUT /v1/users/activated", app.activateUserHandler)
 
 	return app.recoverPanic(app.rateLimit(router))
 }
