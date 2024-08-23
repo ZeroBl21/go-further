@@ -5,7 +5,7 @@ import "net/http"
 func (app *application) routes() http.Handler {
 	router := http.NewServeMux()
 
-	base := CreateStack(app.recoverPanic, app.rateLimit, app.authenticate)
+	base := CreateStack(app.recoverPanic, app.enableCORS, app.rateLimit, app.authenticate)
 
 	router.HandleFunc("GET /v1/healthcheck", app.healthcheckHandler)
 
