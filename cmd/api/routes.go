@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"expvar"
+	"net/http"
+)
 
 func (app *application) routes() http.Handler {
 	router := http.NewServeMux()
@@ -37,6 +40,9 @@ func (app *application) routes() http.Handler {
 
 	// Tokens
 	router.HandleFunc("POST /v1/tokens/authentication", app.createAuthenticationTokenHandler)
+
+	// Expvar
+	router.Handle("GET /debug/vars", expvar.Handler())
 
 	return base(router)
 }
