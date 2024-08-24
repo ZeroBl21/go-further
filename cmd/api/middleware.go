@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/ZeroBl21/go-further/internal/data"
 	"github.com/ZeroBl21/go-further/internal/validator"
+	"github.com/felixge/httpsnoop"
 	"golang.org/x/time/rate"
 )
 
@@ -235,16 +237,17 @@ func (app *application) metrics(next http.Handler) http.Handler {
 	totalRequestSend := expvar.NewInt("total_request_send")
 	totalProcessingTimeMicroseconds := expvar.NewInt("total_processing_time_μs")
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+	totalResponsesSendByStatus := expvar.NewMap("total_responses_send_by_status")
 
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		totalRequestReceived.Add(1)
 
-		next.ServeHTTP(w, r)
+		metrics := httpsnoop.CaptureMetrics(next, w, r)
 
 		totalRequestSend.Add(1)
 
-		duration := time.Now().Sub(start).Microseconds()
-		totalProcessingTimeMicroseconds.Add(duration)
+		totalProcessingTimeMicroseconds.Add(metrics.Duration.Microseconds())
+
+		totalResponsesSendByStatus.Add(strconv.Itoa(metrics.Code), 1)
 	})
 }
