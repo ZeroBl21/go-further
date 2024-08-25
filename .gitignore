@@ -3,3 +3,5 @@ tls/
 *.db
 .profile.fish
 cmd/examples
+.env
+.env*
