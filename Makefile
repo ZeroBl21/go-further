@@ -1,5 +1,8 @@
 include .envrc
 
+# HELPERS
+# ============================================================================ #
+
 ## help: print this help message
 .PHONY: help
 help:
@@ -16,6 +19,8 @@ run/api:
 	go run ./cmd/api -db-dsn=${GREENLIGHT_DB_DSN} \
 		smtp-username=${GREENLIGHT_SMTP_USERNAME} smtp-password=${GREENLIGHT_SMTP_PASSWORD}
 
+# DEVELOPMENT
+# ============================================================================ #
 
 ## db/psql: connect to the database using psql
 .PHONY: db/sql
@@ -33,3 +38,19 @@ db/migration/new:
 db/migration/up: confirm
 	@echo 'Running up migrations...'
 	migrate -path ./migrations -database ${GREENLIGHT_DB_DSN} up
+
+# QUALITY CONTROL
+# ============================================================================ #
+
+## audit: tidy dependencies, format, vet and test all code.
+.PHONY: audit
+audit:
+	@echo 'Tidying and verifying module dependencies'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting Code...'
+	go fmt ./...
+	@echo 'Vetting Code...'
+	staticcheck ./...
+	@echo 'Running test...'
+	go test -race -vet=off ./...
