@@ -5,3 +5,4 @@ tls/
 cmd/examples
 .env
 .env*
+bin/
