@@ -46,6 +46,7 @@ func (app *application) routes() http.Handler {
 	router.HandleFunc("PUT /v1/users/password", app.updateUserPasswordHandler)
 
 	// Tokens
+	router.HandleFunc("POST /v1/tokens/activation", app.createActivationTokenHandler)
 	router.HandleFunc("POST /v1/tokens/authentication", app.createAuthenticationTokenHandler)
 	router.HandleFunc("POST /v1/tokens/password-reset", app.createPasswordResetTokenHandler)
 
